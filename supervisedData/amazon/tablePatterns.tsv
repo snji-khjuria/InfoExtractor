@@ -1,0 +1,2 @@
+LeftPattern	MiddlePattern	RightPattern	TextProcessing
+"<tr* class=""*"">"	"</t*<td class=""*e"">"	"</td>*</tr> <tr* class=""* class="""	None
