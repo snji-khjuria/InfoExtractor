@@ -32,6 +32,8 @@ def addArtificialKeyValueSeeds(html, seed):
     for key in keys:
         for value in values:
             output.append((key, value))
+    if len(output)==0:
+        output = [(k, v)]
     return list(set(output))
 
 import itertools

@@ -20,7 +20,7 @@ def getAllPatternLocations(pattern, s):
     return output
 
 #find entity set in left and right pattern.
-def makeSingleObjectExtractions(pageContent, leftPattern, rightPattern):
+def makeSingleObjectExtractions(pageContent, leftPattern, rightPattern, threshold=1000):
     output = []
     leftPattern  = getRegExpStarBack(re.escape(removeRegExpStar(leftPattern)))
     rightPattern = getRegExpStarBack(re.escape(removeRegExpStar(rightPattern)))
@@ -29,7 +29,7 @@ def makeSingleObjectExtractions(pageContent, leftPattern, rightPattern):
         rpLoc = re.search(rightPattern, pageContent[endL:])
         if not rpLoc is None:
             element = pageContent[endL:endL+rpLoc.start()]
-            if len(element)<=1000:
+            if len(element)<=threshold:
                 output.append(element.strip())
     return list(set(output))
 
@@ -123,7 +123,7 @@ def getPatternsFromStats(stats):
     print(nonEmptyMatches)
     return nonEmptyMatches
 
-def singleObjectPatternFiltering(patterns, websiteLocation, supervisedFileLocation, artificialSeedSet, preprocessType="None"):
+def singleObjectPatternFiltering(patterns, websiteLocation, supervisedFileLocation, artificialSeedSet, threshold=1000, preprocessType="None"):
     stats = {}
     output = []
     patternIndex  = 0
@@ -141,7 +141,7 @@ def singleObjectPatternFiltering(patterns, websiteLocation, supervisedFileLocati
             goldContent   = " ".join(singleObj.split())
             expected     = [goldContent]
             pageContent   = readPlainHtmlPageContent(exactPageLocation)
-            computed      = makeSingleObjectExtractions(pageContent, lp, rp)
+            computed      = makeSingleObjectExtractions(pageContent, lp, rp, threshold)
             resultsPerPattern.append((computed, expected, artificialSeedSet[page]))
         stats[patternIndex] = (pattern, resultsPerPattern)
     patterns = getPatternsFromStats(stats)
@@ -289,4 +289,4 @@ def getElementsOfCluster(cluster, insidePattern):
 
 
 ########################Cluster filtering module##############################
-##############################################################################
+#############################################################################
