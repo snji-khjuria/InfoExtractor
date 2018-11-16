@@ -27,6 +27,14 @@ def readFileContentInList(fileLocation):
 
 import re
 
+def value_is_not_num(s):
+    try:
+        int(s)
+        return False
+    except ValueError:
+        return True
+
+
 def readFileRelationContentInList(fileLocation):
     lines = []
     with open(fileLocation) as file:
@@ -34,7 +42,7 @@ def readFileRelationContentInList(fileLocation):
     output = []
     for line in lines:
         relation = re.split(r'\t+', line)
-        if len(relation)==2:
+        if len(relation)==2 and value_is_not_num(relation[1]):
             output.append((relation[0], relation[1]))
     return output
 
