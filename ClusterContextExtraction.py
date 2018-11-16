@@ -6,7 +6,7 @@ def checkIfAllElementInClusterPresent(pageCluster, clusterElements):
         if not c in pageCluster:
             return False
     return True
-
+from StringUtil import replaceNumWordsInStr
 #it gives me all the possible htmls present inside the html
 def getInsideHtmlWithinPageClusterElements(elementList, pageCluster):
     htmlSet = set([])
@@ -19,9 +19,10 @@ def getInsideHtmlWithinPageClusterElements(elementList, pageCluster):
         htmlSet.add(pageCluster[:loc].strip())
         loc+=len(elementList[index])
         pageCluster = pageCluster[loc:]
-    return list(htmlSet)
+    return list(set([replaceNumWordsInStr(s) for s in list(htmlSet)])), list(htmlSet)
 
 from utils import getLeftIndex, getRightIndex
+from RegExpPatternExtractionUtil import compressMiddleContexts
 def getClusterContexts(pageContent, clusterElements):
     #get the first and last element of cluster
     firstEl                 = clusterElements[0]
@@ -49,10 +50,14 @@ def getClusterContexts(pageContent, clusterElements):
         statusFoundAll  = checkIfAllElementInClusterPresent(pageCluster, clusterElements)
         # print("status found all:- " + str(statusFoundAll))
         #once we know that all elements are there inside the cluster so there must be 1 element only inside
-        insideHtmlList  = getInsideHtmlWithinPageClusterElements(clusterElements, pageCluster)
+        insideHtmlList, trueList  = getInsideHtmlWithinPageClusterElements(clusterElements, pageCluster)
         print("length of inside html:- " + str(len(insideHtmlList)))
         print(insideHtmlList)
         if statusFoundAll==True and len(insideHtmlList)==1:
             # print("Length of inside html is " + str(len(insideHtmlList)))
-            contexts.append((leftContext, insideHtmlList[0], rightContext))
+            trueList = [[item] for item in trueList]
+            middlePattern = compressMiddleContexts(trueList)
+            print("middle patterns are ")
+            print(middlePattern)
+            contexts.append((leftContext, middlePattern[0], rightContext))
     return contexts
